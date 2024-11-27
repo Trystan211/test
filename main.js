@@ -132,10 +132,10 @@ const createStreetlight = (x, z) => {
 
 // Updated streetlight positions (as per red dots in your image)
 const streetlightPositions = [
-  [-15, 15],  // Top-left (Northwest)
-  [15, 15],   // Top-right (Northeast)
-  [-15, -15], // Bottom-left (Southwest)
-  [15, -15]   // Bottom-right (Southeast)
+  [-6, 6],  // Top-left (Northwest)
+  [6, 6],   // Top-right (Northeast)
+  [-6, -6], // Bottom-left (Southwest)
+  [6, -6]   // Bottom-right (Southeast)
 ];
 
 
