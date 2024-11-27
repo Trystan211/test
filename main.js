@@ -4,6 +4,7 @@ import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.152.0/exampl
 // Scene, Camera, Renderer
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x87ceeb);
+scene.fog = new THREE.Fog(0x87ceeb, 50, 100); // Fog starts at 50 and ends at 100
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
 camera.position.set(15, 25, 50);
@@ -107,6 +108,35 @@ const tallBuilding2 = new THREE.Mesh(new THREE.BoxGeometry(10, 40, 10), tallBuil
 tallBuilding2.position.set(-15, 20, -15);
 tallBuilding2.castShadow = true;
 scene.add(tallBuilding2);
+
+// Streetlights
+const streetlightMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
+const lightMaterial = new THREE.MeshStandardMaterial({ color: 0xffd700 });
+
+const createStreetlight = (x, z) => {
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 8, 16), streetlightMaterial);
+  pole.position.set(x, 4, z);
+  pole.castShadow = true;
+  scene.add(pole);
+
+  const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), lightMaterial);
+  bulb.position.set(x, 8, z);
+  bulb.castShadow = true;
+  scene.add(bulb);
+
+  const light = new THREE.PointLight(0xffd700, 1, 15);
+  light.position.set(x, 8, z);
+  light.castShadow = true;
+  scene.add(light);
+};
+
+// Positioning streetlights
+const streetlightPositions = [
+  [-20, 0], [20, 0], [0, -20], [0, 20], // Four main corners of the crossroads
+  [-10, 10], [10, 10], [-10, -10], [10, -10] // Midpoints near each block
+];
+
+streetlightPositions.forEach(([x, z]) => createStreetlight(x, z));
 
 // Lighting
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
