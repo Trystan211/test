@@ -3,8 +3,8 @@ import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.152.0/exampl
 
 // Scene, Camera, Renderer
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x87ceeb);
-scene.fog = new THREE.Fog(0x87ceeb, 50, 100); // Fog starts at 50 and ends at 100
+scene.background = new THREE.Color(0x000033); // Nighttime background (dark blue)
+scene.fog = new THREE.Fog(0x000033, 50, 100); // Fog starts at 50 and ends at 100
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
 camera.position.set(15, 25, 50);
@@ -81,7 +81,7 @@ scene.add(park);
 // Bushes
 const bushMaterial = new THREE.MeshStandardMaterial({ color: 0x006400 });
 
-// Corner Bushes (Smaller) - Adjusted positions closer to the center
+// Corner Bushes (Smaller)
 const cornerBushSize = 1.2;
 const closerBushPositions = [
   [10, -10], // Top-left closer to the center
@@ -124,27 +124,28 @@ const createStreetlight = (x, z) => {
   bulb.castShadow = true;
   scene.add(bulb);
 
-  const light = new THREE.PointLight(0xffd700, 1, 15);
+  const light = new THREE.PointLight(0xffd700, 1.5, 15);
   light.position.set(x, 6.5, z);
   light.castShadow = true;
   scene.add(light);
 };
 
-// Updated streetlight positions: Corners of the street
+// Updated streetlight positions (as per red dots in your image)
 const streetlightPositions = [
-  [-22, 22], [22, 22], [-22, -22], [22, -22] // Corners of the street
+  [-25, 25], [-15, 25], [25, 25], [25, 15], 
+  [25, -25], [15, -25], [-25, -25], [-25, -15]
 ];
 
 streetlightPositions.forEach(([x, z]) => createStreetlight(x, z));
 
 // Lighting
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+const ambientLight = new THREE.AmbientLight(0x444466, 0.5); // Dim ambient light for nighttime
 scene.add(ambientLight);
 
-const sunLight = new THREE.DirectionalLight(0xffffff, 1);
-sunLight.position.set(30, 50, -20);
-sunLight.castShadow = true;
-scene.add(sunLight);
+const moonLight = new THREE.DirectionalLight(0xffffff, 0.5);
+moonLight.position.set(30, 50, -20);
+moonLight.castShadow = true;
+scene.add(moonLight);
 
 // Camera Controls
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -166,5 +167,4 @@ window.addEventListener("resize", () => {
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
-
 
