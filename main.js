@@ -75,22 +75,22 @@ scene.add(smallBuilding);
 // Block 3: Park with Bushes (Southeast)
 const park = new THREE.Mesh(new THREE.PlaneGeometry(18, 18), new THREE.MeshStandardMaterial({ color: 0x228b22 }));
 park.rotation.x = -Math.PI / 2;
-park.position.set(15, 0.01, -15);
+park.position.set(15, 0.1, -15); // Slightly elevate the park
 scene.add(park);
 
 // Bushes
 const bushMaterial = new THREE.MeshStandardMaterial({ color: 0x006400 });
 
-// Corner Bushes (Smaller)
+// Corner Bushes (Smaller) - Adjusted positions closer to the center
 const cornerBushSize = 1.2;
-const cornerBushPositions = [
-  [6, -6], // Top-left
-  [24, -6], // Top-right
-  [6, -24], // Bottom-left
-  [24, -24] // Bottom-right
+const closerBushPositions = [
+  [10, -10], // Top-left closer to the center
+  [20, -10], // Top-right closer to the center
+  [10, -20], // Bottom-left closer to the center
+  [20, -20]  // Bottom-right closer to the center
 ];
 
-cornerBushPositions.forEach(([x, z]) => {
+closerBushPositions.forEach(([x, z]) => {
   const bush = new THREE.Mesh(new THREE.SphereGeometry(cornerBushSize, 8, 8), bushMaterial);
   bush.position.set(x, cornerBushSize, z);
   bush.castShadow = true;
@@ -114,26 +114,25 @@ const streetlightMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
 const lightMaterial = new THREE.MeshStandardMaterial({ color: 0xffd700 });
 
 const createStreetlight = (x, z) => {
-  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 8, 16), streetlightMaterial);
-  pole.position.set(x, 4, z);
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 6, 16), streetlightMaterial); // Smaller pole
+  pole.position.set(x, 3, z); // Adjusted height
   pole.castShadow = true;
   scene.add(pole);
 
-  const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), lightMaterial);
-  bulb.position.set(x, 8, z);
+  const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.4, 16, 16), lightMaterial); // Smaller bulb
+  bulb.position.set(x, 6.5, z);
   bulb.castShadow = true;
   scene.add(bulb);
 
   const light = new THREE.PointLight(0xffd700, 1, 15);
-  light.position.set(x, 8, z);
+  light.position.set(x, 6.5, z);
   light.castShadow = true;
   scene.add(light);
 };
 
-// Positioning streetlights
+// Updated streetlight positions: Corners of the street
 const streetlightPositions = [
-  [-20, 0], [20, 0], [0, -20], [0, 20], // Four main corners of the crossroads
-  [-10, 10], [10, 10], [-10, -10], [10, -10] // Midpoints near each block
+  [-22, 22], [22, 22], [-22, -22], [22, -22] // Corners of the street
 ];
 
 streetlightPositions.forEach(([x, z]) => createStreetlight(x, z));
@@ -167,4 +166,5 @@ window.addEventListener("resize", () => {
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
+
 
