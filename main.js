@@ -132,8 +132,10 @@ const createStreetlight = (x, z) => {
 
 // Updated streetlight positions (as per red dots in your image)
 const streetlightPositions = [
-  [-25, 25], [-15, 25], [25, 25], [25, 15], 
-  [25, -25], [15, -25], [-25, -25], [-25, -15]
+  [-25, 25], [25, 25],  // Top corners
+  [-25, -25], [25, -25], // Bottom corners
+  [-25, 0], [25, 0],    // Midpoints on horizontal roads
+  [0, 25], [0, -25]     // Midpoints on vertical roads
 ];
 
 streetlightPositions.forEach(([x, z]) => createStreetlight(x, z));
