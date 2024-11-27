@@ -3,7 +3,7 @@ import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.152.0/exampl
 
 // Scene, Camera, Renderer
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x87ceeb); // Light blue for daytime sky
+scene.background = new THREE.Color(0x87ceeb); // Light blue for the daytime sky
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
 camera.position.set(15, 20, 30);
@@ -13,85 +13,65 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 document.body.appendChild(renderer.domElement);
 
-// Ground (Street)
-const ground = new THREE.Mesh(
-  new THREE.PlaneGeometry(50, 50),
-  new THREE.MeshStandardMaterial({ color: 0x2f2f2f }) // Asphalt-like color
-);
-ground.rotation.x = -Math.PI / 2;
-ground.receiveShadow = true;
-scene.add(ground);
+// Ground (Street Crossroads)
+const streetMaterial = new THREE.MeshStandardMaterial({ color: 0x2f2f2f }); // Asphalt-like color
+const street = new THREE.Mesh(new THREE.PlaneGeometry(50, 50), streetMaterial);
+street.rotation.x = -Math.PI / 2;
+street.receiveShadow = true;
+scene.add(street);
 
-// Road Lines
-const roadLineMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-for (let i = -20; i <= 20; i += 4) {
-  const roadLine = new THREE.Mesh(
-    new THREE.BoxGeometry(0.2, 0.01, 2),
-    roadLineMaterial
-  );
-  roadLine.position.set(i, 0.01, 0);
-  scene.add(roadLine);
+// Sidewalk Lines
+const sidewalkMaterial = new THREE.MeshStandardMaterial({ color: 0x4b4b4b }); // Darker gray for the sidewalk
+const sidewalkSize = 5;
+for (let i = -20; i <= 20; i += sidewalkSize) {
+  for (let j = -20; j <= 20; j += sidewalkSize) {
+    if (i === 0 || j === 0) continue; // Skip streets
+    const sidewalk = new THREE.Mesh(new THREE.PlaneGeometry(sidewalkSize, sidewalkSize), sidewalkMaterial);
+    sidewalk.rotation.x = -Math.PI / 2;
+    sidewalk.position.set(i, 0.01, j);
+    scene.add(sidewalk);
+  }
 }
 
-// Street Divider
-const divider = new THREE.Mesh(
-  new THREE.BoxGeometry(1, 0.2, 50),
-  new THREE.MeshStandardMaterial({ color: 0x4b4b4b })
-);
-divider.position.set(0, 0.1, 0);
-scene.add(divider);
-
 // Buildings
-const buildingMaterialTall = new THREE.MeshStandardMaterial({ color: 0x808080 });
-const buildingMaterialSmall = new THREE.MeshStandardMaterial({ color: 0x404040 });
+const tallBuildingMaterial = new THREE.MeshStandardMaterial({ color: 0x808080 });
+const smallBuildingMaterial = new THREE.MeshStandardMaterial({ color: 0x404040 });
 
-// Tall Building 1
-const tallBuilding1 = new THREE.Mesh(
-  new THREE.BoxGeometry(4, 20, 4),
-  buildingMaterialTall
-);
-tallBuilding1.position.set(-8, 10, 8);
-tallBuilding1.castShadow = true;
-scene.add(tallBuilding1);
+// Block 1: Two Tall Buildings (Northwest)
+for (let i = -15; i <= -10; i += 5) {
+  const tallBuilding = new THREE.Mesh(new THREE.BoxGeometry(4, 20, 4), tallBuildingMaterial);
+  tallBuilding.position.set(i, 10, 15);
+  tallBuilding.castShadow = true;
+  scene.add(tallBuilding);
+}
 
-// Tall Building 2
-const tallBuilding2 = new THREE.Mesh(
-  new THREE.BoxGeometry(4, 20, 4),
-  buildingMaterialTall
-);
-tallBuilding2.position.set(-8, 10, 12);
-tallBuilding2.castShadow = true;
-scene.add(tallBuilding2);
-
-// Small Building
-const smallBuilding = new THREE.Mesh(
-  new THREE.BoxGeometry(6, 10, 6),
-  buildingMaterialSmall
-);
-smallBuilding.position.set(8, 5, -8);
+// Block 2: Small Building (Northeast)
+const smallBuilding = new THREE.Mesh(new THREE.BoxGeometry(8, 10, 8), smallBuildingMaterial);
+smallBuilding.position.set(15, 5, 15);
 smallBuilding.castShadow = true;
 scene.add(smallBuilding);
 
-// Plain Field with Bushes
-const field = new THREE.Mesh(
-  new THREE.PlaneGeometry(10, 10),
-  new THREE.MeshStandardMaterial({ color: 0x228b22 }) // Green field
-);
-field.rotation.x = -Math.PI / 2;
-field.position.set(-12, 0.01, -12);
-scene.add(field);
+// Block 3: Park with Bushes (Southeast)
+const park = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), new THREE.MeshStandardMaterial({ color: 0x228b22 })); // Green for grass
+park.rotation.x = -Math.PI / 2;
+park.position.set(15, 0.01, -15);
+scene.add(park);
 
-// Bushes
 const bushMaterial = new THREE.MeshStandardMaterial({ color: 0x006400 });
-for (let i = -15; i <= -10; i += 2) {
-  const bush = new THREE.Mesh(
-    new THREE.SphereGeometry(1, 8, 8),
-    bushMaterial
-  );
-  bush.position.set(i, 1, -15);
-  bush.castShadow = true;
-  scene.add(bush);
+for (let i = 12; i <= 18; i += 2) {
+  for (let j = -18; j <= -12; j += 2) {
+    const bush = new THREE.Mesh(new THREE.SphereGeometry(1, 8, 8), bushMaterial);
+    bush.position.set(i, 1, j);
+    bush.castShadow = true;
+    scene.add(bush);
+  }
 }
+
+// Block 4: Empty Southwest Block
+const emptyBlock = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), new THREE.MeshStandardMaterial({ color: 0x2e8b57 })); // Slightly different green
+emptyBlock.rotation.x = -Math.PI / 2;
+emptyBlock.position.set(-15, 0.01, -15);
+scene.add(emptyBlock);
 
 // Lighting
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -122,3 +102,4 @@ window.addEventListener("resize", () => {
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
+
