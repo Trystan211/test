@@ -3,154 +3,152 @@ import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.152.0/exampl
 
 // Scene, Camera, Renderer
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x87ceeb);
-scene.fog = new THREE.Fog(0x87ceeb, 50, 100); // Fog starts at 50 and ends at 100
+scene.background = new THREE.Color(0x000022); // Nighttime color
+scene.fog = new THREE.Fog(0x000022, 20, 70); // Nighttime fog for depth
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-camera.position.set(15, 25, 50);
+camera.position.set(20, 15, 25);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 document.body.appendChild(renderer.domElement);
 
-// Ground (Street Crossroads)
-const streetMaterial = new THREE.MeshStandardMaterial({ color: 0x2f2f2f });
-const street = new THREE.Mesh(new THREE.PlaneGeometry(50, 50), streetMaterial);
-street.rotation.x = -Math.PI / 2;
-street.receiveShadow = true;
-scene.add(street);
+// Ground
+const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x303030 });
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(50, 50), groundMaterial);
+ground.rotation.x = -Math.PI / 2;
+ground.receiveShadow = true;
+scene.add(ground);
 
-// Add white street stripes
-const stripeMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
-for (let i = -20; i <= 20; i += 5) {
-  if (i !== 0) {
-    const stripe = new THREE.Mesh(new THREE.PlaneGeometry(1, 0.2), stripeMaterial);
-    stripe.rotation.x = -Math.PI / 2;
-    stripe.position.set(i, 0.01, 0);
-    scene.add(stripe);
+// Blocks (gray floor to identify the blocks)
+const blockMaterial = new THREE.MeshStandardMaterial({ color: 0x505050 });
+const block1 = new THREE.Mesh(new THREE.PlaneGeometry(12, 12), blockMaterial);
+block1.rotation.x = -Math.PI / 2;
+block1.position.set(-12, 0.01, 12);
+scene.add(block1);
 
-    const stripeVertical = stripe.clone();
-    stripeVertical.rotation.z = Math.PI / 2;
-    stripeVertical.position.set(0, 0.01, i);
-    scene.add(stripeVertical);
-  }
+const block2 = block1.clone();
+block2.position.set(12, 0.01, 12);
+scene.add(block2);
+
+const block3 = block1.clone();
+block3.position.set(-12, 0.01, -12);
+scene.add(block3);
+
+const block4 = block1.clone();
+block4.position.set(12, 0.01, -12);
+scene.add(block4);
+
+// Streets
+const streetMaterial = new THREE.MeshStandardMaterial({ color: 0x1a1a1a });
+const streetX = new THREE.Mesh(new THREE.PlaneGeometry(50, 6), streetMaterial);
+streetX.rotation.x = -Math.PI / 2;
+scene.add(streetX);
+
+const streetZ = new THREE.Mesh(new THREE.PlaneGeometry(6, 50), streetMaterial);
+streetZ.rotation.x = -Math.PI / 2;
+scene.add(streetZ);
+
+// Streetlines
+const lineMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+for (let i = -24; i <= 24; i += 3) {
+  const line = new THREE.Mesh(new THREE.PlaneGeometry(0.2, 0.5), lineMaterial);
+  line.rotation.x = -Math.PI / 2;
+  line.position.set(i, 0.02, 0);
+  scene.add(line);
+
+  const lineZ = line.clone();
+  lineZ.position.set(0, 0.02, i);
+  lineZ.rotation.z = Math.PI / 2;
+  scene.add(lineZ);
 }
 
-// Gray floors for the blocks
-const blockMaterial = new THREE.MeshStandardMaterial({ color: 0x808080 });
-
-const blockSize = 20;
-const blockPositions = [
-  [-15, 0, 15], // Block 1: Northwest
-  [15, 0, 15],  // Block 2: Northeast
-  [15, 0, -15], // Block 3: Southeast
-  [-15, 0, -15] // Block 4: Southwest
-];
-
-blockPositions.forEach(([x, y, z]) => {
-  const block = new THREE.Mesh(new THREE.PlaneGeometry(blockSize, blockSize), blockMaterial);
-  block.rotation.x = -Math.PI / 2;
-  block.position.set(x, y + 0.01, z);
-  block.receiveShadow = true;
-  scene.add(block);
-});
-
 // Buildings
-const tallBuildingMaterial = new THREE.MeshStandardMaterial({ color: 0x505050 });
-const smallBuildingMaterial = new THREE.MeshStandardMaterial({ color: 0x404040 });
+const tallBuildingGeometry = new THREE.BoxGeometry(5, 20, 5);
+const smallBuildingGeometry = new THREE.BoxGeometry(7, 10, 7);
+const buildingMaterial = new THREE.MeshStandardMaterial({ color: 0x404040 });
 
-// Block 1: One Tall Building (Northwest)
-const tallBuilding1 = new THREE.Mesh(new THREE.BoxGeometry(8, 35, 8), tallBuildingMaterial);
-tallBuilding1.position.set(-15, 17.5, 15);
+const tallBuilding1 = new THREE.Mesh(tallBuildingGeometry, buildingMaterial);
+tallBuilding1.position.set(-12, 10, 12);
 tallBuilding1.castShadow = true;
 scene.add(tallBuilding1);
 
-// Block 2: Small Building (Northeast)
-const smallBuilding = new THREE.Mesh(new THREE.BoxGeometry(15, 15, 15), smallBuildingMaterial);
-smallBuilding.position.set(15, 7.5, 15);
+const tallBuilding2 = tallBuilding1.clone();
+tallBuilding2.position.set(12, 10, -12);
+scene.add(tallBuilding2);
+
+const smallBuilding = new THREE.Mesh(smallBuildingGeometry, buildingMaterial);
+smallBuilding.position.set(-12, 5, -12);
 smallBuilding.castShadow = true;
 scene.add(smallBuilding);
 
-// Block 3: Park with Bushes (Southeast)
-const park = new THREE.Mesh(new THREE.PlaneGeometry(18, 18), new THREE.MeshStandardMaterial({ color: 0x228b22 }));
+// Park
+const parkMaterial = new THREE.MeshStandardMaterial({ color: 0x228b22 });
+const park = new THREE.Mesh(new THREE.PlaneGeometry(11, 11), parkMaterial);
+park.position.set(12, 0.05, 12);
 park.rotation.x = -Math.PI / 2;
-park.position.set(15, 0.01, -15);
 scene.add(park);
 
 // Bushes
+const bushGeometry = new THREE.SphereGeometry(0.5, 16, 16);
 const bushMaterial = new THREE.MeshStandardMaterial({ color: 0x006400 });
-
-// Corner Bushes (Smaller)
-const cornerBushSize = 1.2;
-const cornerBushPositions = [
-  [6, -6], // Top-left
-  [24, -6], // Top-right
-  [6, -24], // Bottom-left
-  [24, -24] // Bottom-right
+const bushPositions = [
+  [10, 0.3, 10],
+  [14, 0.3, 10],
+  [10, 0.3, 14],
+  [14, 0.3, 14],
 ];
-
-cornerBushPositions.forEach(([x, z]) => {
-  const bush = new THREE.Mesh(new THREE.SphereGeometry(cornerBushSize, 8, 8), bushMaterial);
-  bush.position.set(x, cornerBushSize, z);
+bushPositions.forEach(([x, y, z]) => {
+  const bush = new THREE.Mesh(bushGeometry, bushMaterial);
+  bush.position.set(x, y, z);
   bush.castShadow = true;
   scene.add(bush);
 });
 
-// Center Bush (Larger)
-const centerBush = new THREE.Mesh(new THREE.SphereGeometry(2, 12, 12), bushMaterial);
-centerBush.position.set(15, 2, -15);
-centerBush.castShadow = true;
-scene.add(centerBush);
-
-// Block 4: One Tall Building (Southwest)
-const tallBuilding2 = new THREE.Mesh(new THREE.BoxGeometry(10, 40, 10), tallBuildingMaterial);
-tallBuilding2.position.set(-15, 20, -15);
-tallBuilding2.castShadow = true;
-scene.add(tallBuilding2);
+const middleBush = new THREE.Mesh(new THREE.SphereGeometry(0.8, 16, 16), bushMaterial);
+middleBush.position.set(12, 0.4, 12);
+middleBush.castShadow = true;
+scene.add(middleBush);
 
 // Streetlights
-const streetlightMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
-const lightMaterial = new THREE.MeshStandardMaterial({ color: 0xffd700 });
+const streetlightGeometry = new THREE.CylinderGeometry(0.1, 0.1, 4);
+const lightMaterial = new THREE.MeshStandardMaterial({ color: 0x222222 });
 
-const createStreetlight = (x, z) => {
-  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 8, 16), streetlightMaterial);
-  pole.position.set(x, 4, z);
-  pole.castShadow = true;
-  scene.add(pole);
-
-  const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), lightMaterial);
-  bulb.position.set(x, 8, z);
-  bulb.castShadow = true;
-  scene.add(bulb);
-
-  const light = new THREE.PointLight(0xffd700, 1, 15);
-  light.position.set(x, 8, z);
-  light.castShadow = true;
-  scene.add(light);
-};
-
-// Positioning streetlights
-const streetlightPositions = [
-  [-20, 0], [20, 0], [0, -20], [0, 20], // Four main corners of the crossroads
-  [-10, 10], [10, 10], [-10, -10], [10, -10] // Midpoints near each block
+const lightPositions = [
+  [-15, 2, 12],
+  [-9, 2, 12],
+  [12, 2, 15],
+  [12, 2, 9],
+  [15, 2, -12],
+  [9, 2, -12],
+  [-12, 2, -15],
+  [-12, 2, -9],
 ];
 
-streetlightPositions.forEach(([x, z]) => createStreetlight(x, z));
+lightPositions.forEach(([x, y, z]) => {
+  const pole = new THREE.Mesh(streetlightGeometry, lightMaterial);
+  pole.position.set(x, y, z);
 
-// Lighting
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+  const light = new THREE.PointLight(0xffdd88, 0.5, 10);
+  light.position.set(x, 4, z);
+  scene.add(pole);
+  scene.add(light);
+});
+
+// Lights
+const ambientLight = new THREE.AmbientLight(0x404040, 0.5); // Dim light for the scene
 scene.add(ambientLight);
 
-const sunLight = new THREE.DirectionalLight(0xffffff, 1);
-sunLight.position.set(30, 50, -20);
-sunLight.castShadow = true;
-scene.add(sunLight);
+const moonLight = new THREE.DirectionalLight(0xccccff, 0.3);
+moonLight.position.set(-10, 50, -10);
+moonLight.castShadow = true;
+scene.add(moonLight);
 
 // Camera Controls
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
-controls.dampingFactor = 0.25;
+controls.dampingFactor = 0.2;
 
 // Animation
 const animate = () => {
@@ -161,8 +159,8 @@ const animate = () => {
 
 animate();
 
-// Handle window resize
-window.addEventListener("resize", () => {
+// Resize handler
+window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
