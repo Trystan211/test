@@ -6,7 +6,7 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x87ceeb);
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-camera.position.set(15, 20, 40);
+camera.position.set(15, 25, 50);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -20,7 +20,7 @@ street.rotation.x = -Math.PI / 2;
 street.receiveShadow = true;
 scene.add(street);
 
-// White Stripes
+// Add white street stripes
 const stripeMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
 for (let i = -20; i <= 20; i += 5) {
   if (i !== 0) {
@@ -36,31 +36,50 @@ for (let i = -20; i <= 20; i += 5) {
   }
 }
 
+// Gray floors for the blocks
+const blockMaterial = new THREE.MeshStandardMaterial({ color: 0x808080 });
+
+const blockSize = 20;
+const blockPositions = [
+  [-15, 0, 15], // Block 1: Northwest
+  [15, 0, 15],  // Block 2: Northeast
+  [15, 0, -15], // Block 3: Southeast
+  [-15, 0, -15] // Block 4: Southwest
+];
+
+blockPositions.forEach(([x, y, z]) => {
+  const block = new THREE.Mesh(new THREE.PlaneGeometry(blockSize, blockSize), blockMaterial);
+  block.rotation.x = -Math.PI / 2;
+  block.position.set(x, y + 0.01, z);
+  block.receiveShadow = true;
+  scene.add(block);
+});
+
 // Buildings
-const tallBuildingMaterial = new THREE.MeshStandardMaterial({ color: 0x808080 });
+const tallBuildingMaterial = new THREE.MeshStandardMaterial({ color: 0x505050 });
 const smallBuildingMaterial = new THREE.MeshStandardMaterial({ color: 0x404040 });
 
 // Block 1: One Tall Building (Northwest)
-const tallBuilding1 = new THREE.Mesh(new THREE.BoxGeometry(6, 25, 6), tallBuildingMaterial);
-tallBuilding1.position.set(-12, 12.5, 12);
+const tallBuilding1 = new THREE.Mesh(new THREE.BoxGeometry(8, 35, 8), tallBuildingMaterial);
+tallBuilding1.position.set(-15, 17.5, 15);
 tallBuilding1.castShadow = true;
 scene.add(tallBuilding1);
 
 // Block 2: Small Building (Northeast)
-const smallBuilding = new THREE.Mesh(new THREE.BoxGeometry(12, 12, 12), smallBuildingMaterial);
-smallBuilding.position.set(12, 6, 12);
+const smallBuilding = new THREE.Mesh(new THREE.BoxGeometry(15, 15, 15), smallBuildingMaterial);
+smallBuilding.position.set(15, 7.5, 15);
 smallBuilding.castShadow = true;
 scene.add(smallBuilding);
 
 // Block 3: Park with Bushes (Southeast)
-const park = new THREE.Mesh(new THREE.PlaneGeometry(15, 15), new THREE.MeshStandardMaterial({ color: 0x228b22 }));
+const park = new THREE.Mesh(new THREE.PlaneGeometry(25, 25), new THREE.MeshStandardMaterial({ color: 0x228b22 }));
 park.rotation.x = -Math.PI / 2;
-park.position.set(12, 0.01, -12);
+park.position.set(15, 0.01, -15);
 scene.add(park);
 
 const bushMaterial = new THREE.MeshStandardMaterial({ color: 0x006400 });
-for (let i = 9; i <= 15; i += 2) {
-  for (let j = -15; j <= -9; j += 2) {
+for (let i = 8; i <= 22; i += 3) {
+  for (let j = -22; j <= -8; j += 3) {
     const bush = new THREE.Mesh(new THREE.SphereGeometry(1.5, 8, 8), bushMaterial);
     bush.position.set(i, 1.5, j);
     bush.castShadow = true;
@@ -69,8 +88,8 @@ for (let i = 9; i <= 15; i += 2) {
 }
 
 // Block 4: One Tall Building (Southwest)
-const tallBuilding2 = new THREE.Mesh(new THREE.BoxGeometry(8, 30, 8), tallBuildingMaterial);
-tallBuilding2.position.set(-12, 15, -12);
+const tallBuilding2 = new THREE.Mesh(new THREE.BoxGeometry(10, 40, 10), tallBuildingMaterial);
+tallBuilding2.position.set(-15, 20, -15);
 tallBuilding2.castShadow = true;
 scene.add(tallBuilding2);
 
