@@ -72,20 +72,35 @@ smallBuilding.castShadow = true;
 scene.add(smallBuilding);
 
 // Block 3: Park with Bushes (Southeast)
-const park = new THREE.Mesh(new THREE.PlaneGeometry(25, 25), new THREE.MeshStandardMaterial({ color: 0x228b22 }));
+const park = new THREE.Mesh(new THREE.PlaneGeometry(18, 18), new THREE.MeshStandardMaterial({ color: 0x228b22 }));
 park.rotation.x = -Math.PI / 2;
 park.position.set(15, 0.01, -15);
 scene.add(park);
 
+// Bushes
 const bushMaterial = new THREE.MeshStandardMaterial({ color: 0x006400 });
-for (let i = 8; i <= 22; i += 3) {
-  for (let j = -22; j <= -8; j += 3) {
-    const bush = new THREE.Mesh(new THREE.SphereGeometry(1.5, 8, 8), bushMaterial);
-    bush.position.set(i, 1.5, j);
-    bush.castShadow = true;
-    scene.add(bush);
-  }
-}
+
+// Corner Bushes (Smaller)
+const cornerBushSize = 1.2;
+const cornerBushPositions = [
+  [6, -6], // Top-left
+  [24, -6], // Top-right
+  [6, -24], // Bottom-left
+  [24, -24] // Bottom-right
+];
+
+cornerBushPositions.forEach(([x, z]) => {
+  const bush = new THREE.Mesh(new THREE.SphereGeometry(cornerBushSize, 8, 8), bushMaterial);
+  bush.position.set(x, cornerBushSize, z);
+  bush.castShadow = true;
+  scene.add(bush);
+});
+
+// Center Bush (Larger)
+const centerBush = new THREE.Mesh(new THREE.SphereGeometry(2, 12, 12), bushMaterial);
+centerBush.position.set(15, 2, -15);
+centerBush.castShadow = true;
+scene.add(centerBush);
 
 // Block 4: One Tall Building (Southwest)
 const tallBuilding2 = new THREE.Mesh(new THREE.BoxGeometry(10, 40, 10), tallBuildingMaterial);
